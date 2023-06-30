@@ -1,0 +1,23 @@
+---
+# DNS Session 
+domain: local.lab
+dnsconfig: ok 
+
+# Kvm session
+libvirt_dir: "/var/lib/libvirt"
+img_template: "ubuntu20.04"
+template_address: "192.168.200.10"
+
+
+osvariant: ubuntu20.04
+vm:
+  - name: repo
+    cpu: 1
+    mem: 2048
+    net_type: "network"
+    net_connector: "netlab1"
+    net:
+      ip: 192.168.200.150
+      mask: 255.255.255.0
+      gateway: 192.168.200.1
+      dns: 192.168.200.1

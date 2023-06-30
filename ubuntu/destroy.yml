@@ -1,0 +1,57 @@
+- hosts: kvm
+  become: true
+  vars_prompt:
+     - name: ireallymeanit
+       prompt: Are you sure you want to destroy the vms?
+       default: 'no'
+       private: no
+  tasks:
+    - name: exit playbook, if user did not mean to destroy the vms
+      fail:
+        msg: >
+         "Exiting destroy playbook, vms was NOT destroyed.
+          To destroy vms, either say 'yes' on the prompt or
+          or use `-e ireallymeanit=yes` on the command line when
+          invoking the playbook"
+      when: ireallymeanit != 'yes'
+
+    - name: "Check current virtual machines"
+      virt:
+        command: list_vms
+      register: vms
+
+    - name: Undefine vms
+      virt:
+        name: "{{ item.name }}"
+        command: undefine
+      loop: "{{ vm }}"
+      when: item.name in vms.list_vms
+      tags:
+        - vm_undefine
+
+    - name: Destroy vms
+      virt:
+        name: "{{ item.name }}"
+        command: destroy
+      loop: "{{ vm }}"
+      when: item.name in vms.list_vms
+      tags:
+        - vm_destroy
+
+    - name: Remove vms directories
+      file:
+        path: "{{ libvirt_dir }}/images/{{ item.name }}.qcow2"
+        state: absent
+      loop: "{{ vm }}"
+      tags:
+        - vm_removedir
+
+    - name: Remove the vms scripts files
+      file:
+        path: "/var/lib/libvirt/images/ubuntu/netplan/{{ item.name }}.netplanedit.sh "
+
+        state: absent
+      loop: "{{ vm }}"
+      tags:
+        - vm_removedir
+

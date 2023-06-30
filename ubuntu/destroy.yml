@@ -38,7 +38,7 @@
       tags:
         - vm_destroy
 
-    - name: Remove vms directories
+    - name: Remove vm file
       file:
         path: "{{ libvirt_dir }}/images/{{ item.name }}.qcow2"
         state: absent
@@ -48,7 +48,7 @@
 
     - name: Remove the vms scripts files
       file:
-        path: "/var/lib/libvirt/images/ubuntu/netplan/{{ item.name }}.netplanedit.sh "
+        path: "/var/lib/libvirt/images/ubuntu/netplan/{{ item.name }}.netplanedit.sh"
 
         state: absent
       loop: "{{ vm }}"

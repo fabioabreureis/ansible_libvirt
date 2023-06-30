@@ -6,8 +6,8 @@ Download the ubuntu 20 or 22 for template configuration
 
 inside of the util directory there are some files to help with: 
 
--> netlab1.xml: to configure the invernal libvirt network, virsh net-import netlab1.xml
--> virt_install.sh: the script to run and prepare the template vm, this step is interactive with the terminal to configure everything. e.g: name, ip, hostname...
+* netlab1.xml: to configure the invernal libvirt network, virsh net-import netlab1.xml.
+* virt_install.sh: the script to run and prepare the template vm, this step is interactive with the terminal to configure everything. e.g: name, ip, hostname...
 
 
 2) Setting the variables 

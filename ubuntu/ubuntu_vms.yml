@@ -21,6 +21,17 @@
       tags:
         - imgfilecheck
 
+    - name: Check if the netplan directory exists
+      stat:
+        path: "{{ libvirt_dir }}/images/netplan"
+      register: netplandir
+
+    - name: Create the netplan directory 
+      file: 
+        path: "/var/lib/libvirt/images/netplan"
+        state: directory
+      when: netplandir.stat.islnk is not defined
+
     - name: Image template copy
       command: " cp -Rv {{ libvirt_dir }}/images/{{ img_template }}.qcow2 {{ libvirt_dir }}/images/{{ item.name }}.qcow2"
       loop: "{{ vm }}"    
@@ -29,11 +40,11 @@
     - name: Copy netplan template script 
       copy:
         content: "sudo sed -i 's/{{ template_address }}/{{ item.net.ip }}/g' /etc/netplan/00-installer-config.yaml && sudo netplan apply"
-        dest: "/var/lib/libvirt/images/ubuntu/netplan/{{ item.name }}.netplanedit.sh"
+        dest: "/var/lib/libvirt/images/netplan/{{ item.name }}.netplanedit.sh"
       loop: "{{ vm }}"
 
     - name: customize the image to set the ip address
-      command: "virt-customize  --run /var/lib/libvirt/images/ubuntu/netplan/{{ item.name }}.netplanedit.sh -a  {{ libvirt_dir }}/images/{{ item.name }}.qcow2"
+      command: "virt-customize  --run /var/lib/libvirt/images/netplan/{{ item.name }}.netplanedit.sh -a  {{ libvirt_dir }}/images/{{ item.name }}.qcow2"
       loop: "{{ vm }}"
 
     - name: "Check current virtual machines"
